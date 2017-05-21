@@ -6,7 +6,6 @@ import dns.resolver
 import os
 import requests
 import sys
-import urllib
 
 def check_dns(target_name):
 	retval = []
@@ -20,14 +19,14 @@ def check_dns(target_name):
 		retval.append(str(value))
 	return retval
 
-def check_encoding(target_name):
-	target_url = "http://" + target_name
-	data = urllib.urlopen(target_url).read()
-	return chardet.detect(data)
+def check_encoding(ip, target_name):
+	target_url = "http://" + ip + "/"
+	repsonse = requests.get(target_url, allow_redirects=False, headers = {"host": target_name})
+	return chardet.detect(response._content)
 
-def check_status(target_name):
-	target_url = "http://" + target_name
-	response = requests.get(target_url, allow_redirects=False)
+def check_status(ip, target_name):
+	target_url = "http://" + ip + "/"
+	response = requests.get(target_url, allow_redirects=False, headers = {"host": target_name})
 	if response.status_code == 200:
 		return (200, None)
 	if response.status_code == 301 or response.status_code == 302:
