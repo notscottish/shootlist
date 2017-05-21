@@ -2,11 +2,23 @@
 
 import argparse
 import chardet
-import dns
+import dns.resolver
 import os
 import requests
 import sys
 import urllib
+
+def check_dns(target_name):
+	retval = []
+	resolver = dns.resolver.Resolver()
+	try:
+		response = resolver.query(target_name, "A")
+	except dns.resolver.NXDOMAIN:
+		sys.stderr.write("warning: could not resolve name: \"%s\"" % (target_name))
+		return retval
+	for value in response:
+		retval.append(str(value))
+	return retval
 
 def check_encoding(target_name):
 	target_url = "http://" + target_name
