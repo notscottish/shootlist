@@ -48,20 +48,20 @@ class Site(object):
 			self.redirect = (response.status_code, response.headers['Location'])
 		return
 	
-    def discover_ports(self):
-        if self.ip is None:
-            return
-        ports = []
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        r = s.connect_ex(self.name, 80)
-        if r == 0:
-            ports.append(80)
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        r = s.connect_ex(self.name, 443)
-        if r == 0:
-            ports.append(443)
-        if len(ports) > 0:
-            self.ports = ports
+	def discover_ports(self):
+		if self.ip is None:
+			return
+		ports = []
+		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		r = s.connect_ex(self.name, 80)
+		if r == 0:
+			ports.append(80)
+		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		r = s.connect_ex(self.name, 443)
+		if r == 0:
+			ports.append(443)
+		if len(ports) > 0:
+			self.ports = ports
 		return
 
 if __name__ == "__main__":
