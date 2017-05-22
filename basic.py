@@ -7,7 +7,7 @@ import os
 import requests
 import sys
 
-def check_dns(target_name):
+def discover_ip(target_name):
 	retval = []
 	resolver = dns.resolver.Resolver()
 	try:
@@ -19,12 +19,12 @@ def check_dns(target_name):
 		retval.append(str(value))
 	return retval
 
-def check_encoding(ip, target_name):
+def discover_encoding(ip, target_name):
 	target_url = "http://" + ip + "/"
 	repsonse = requests.get(target_url, allow_redirects=False, headers = {"host": target_name})
 	return chardet.detect(response._content)
 
-def check_status(ip, target_name):
+def discover_status(ip, target_name):
 	target_url = "http://" + ip + "/"
 	response = requests.get(target_url, allow_redirects=False, headers = {"host": target_name})
 	if response.status_code == 200:
@@ -49,4 +49,4 @@ if __name__ == "__main__":
 	for name in targets_list:
 		if (len(name) == 0):
 			continue
-		print name, check_encoding(name)
+		print name, discover_ip(name), discover_encoding(name)
