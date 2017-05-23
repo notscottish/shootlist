@@ -60,7 +60,7 @@ class Site(object):
 		if r == 0:
 			ports.append(80)
 		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		s.timeout(4.0)
+		s.settimeout(4.0)
 		r = s.connect_ex((self.name, 443))
 		if r == 0:
 			ports.append(443)
