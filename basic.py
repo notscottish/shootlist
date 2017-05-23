@@ -55,7 +55,7 @@ class Site(object):
 			return
 		ports = []
 		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		
+		s.settimeout(4.0)
 		r = s.connect_ex((self.name, 80))
 		if r == 0:
 			ports.append(80)
