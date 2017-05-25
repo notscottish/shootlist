@@ -8,4 +8,4 @@ For each FQDN, the script will:
 * Get the encoding type (UTF-8, ASCII...)
 
 # Usage
-python shootlist.py -f fqdn_list_filename
+`python shootlist.py -f fqdn_list_filename`
