@@ -51,7 +51,7 @@ class Site(object):
             self.dnstype = "CNAME"
             self.dnsrecord = ""
 	    for val in a.response.answer:
-		self.dnsrecord += val.to_string()
+		self.dnsrecord += val.to_text()
 		self.dnsrecord += "\n"
         else:
             self.dnstype = "A"
