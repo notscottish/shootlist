@@ -49,7 +49,10 @@ class Site(object):
             return
         if re.search("CNAME",a.response.answer[0].__str__(), flags=re.IGNORECASE):
             self.dnstype = "CNAME"
-            self.dnsrecord = a.response.answer.__str__()
+            self.dnsrecord = ""
+	    for val in a.response.answer:
+		self.dnsrecord += val.to_string()
+		self.dnsrecord += "\n"
         else:
             self.dnstype = "A"
             self.dnsrecord = a.response.answer.__str__()
