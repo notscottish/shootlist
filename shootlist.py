@@ -85,13 +85,17 @@ class Site(object):
         try:
             response = requests.get(target_url, allow_redirects=False, headers = {"host": self.name})
         except requests.exceptions.ConnectionError:
-            # port is open but not accepting connections, so remove port
-            if 443 in self.ports:
-                self.ports = [443]
-            else:
-                self.ports = None
+#           # port is open but not accepting connections, so remove port
+#           if 443 in self.ports:
+#               self.ports = [443]
+#           else:
+#               self.ports = None
             return
-        self.encoding = chardet.detect(response._content)['encoding']
+        match = re.search("charset=([a-zA-Z0-9_-]+)", response._content)
+        if match:
+            self.encoding = match.groups()[0]
+        else:
+            self.encoding = chardet.detect(response._content)['encoding']
         
     def run_all(self):
         print "Running %s\n" % (self.name)
