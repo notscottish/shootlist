@@ -11,7 +11,7 @@ Output is in comma separated values (CSV) format.
 
 # Setup
 
-One OSX, make sure the dependencies are installed using the following terminal commands:
+On OSX, make sure the dependencies are installed using the following terminal commands:
 * sudo easy_install pip
 * sudo pip install requests chardet argparse
 
