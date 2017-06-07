@@ -67,13 +67,13 @@ class Site(object):
             sys.stderr.write("Warning: Could not resolve name: \"%s\". No IP set." % (self.name))
             return
         except dns.resolver.NoAnswer:
-            sys.stderr.write("Warning: The DNS response does not contain an answer to the question: brkb.biosecurity.govt.nz. IN A\n")
+            sys.stderr.write("Warning: The DNS response does not contain an answer to the question\n")
             return
         for value in response:
             retval.append(str(value))
         # This is a bodge for the meantime
         if len(retval) > 1:
-            sys.stderr.write("Warning: Multiple IPs returned, using the first only")
+            sys.stderr.write("Warning: Multiple IPs returned, using the first only\n")
         self.ip = retval[0]
         
     def get_encoding(self):
