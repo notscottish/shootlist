@@ -5,7 +5,7 @@ For each FQDN, the script will:
 * Get the DNS record type (CNAME or A record)
 * Get the DNS response
 * Get the IP
-* Get the encoding type (UTF-8, ASCII...)
+* Get the encoding type (UTF-8, ASCII...) (Note: If the encoding is in the HTTP response, uses this. Otherwise, it parse the response using the chardet package to make a guess)
 
 Output is in comma separated values (CSV) format.
 
