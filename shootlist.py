@@ -108,7 +108,7 @@ class Site(object):
 	self.location = a.content.split(",").__str__()
 	
     def run_all(self):
-        print "Running %s\n" % (self.name)
+        sys.stderr.write("Running %s\n" % (self.name))
         self.get_dnstype()
         self.get_ip()
         self.get_ports()
