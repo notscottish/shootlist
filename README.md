@@ -19,4 +19,4 @@ On Ubuntu, make sure the dependencies are installed using the following commands
 * `apt-get install python-chardet python-requests python-argparse python-dnspython`
 
 # Usage
-`python shootlist.py -f fqdn_list_filename`
+`python shootlist.py -f fqdn_list_filename 2>/dev/null > output.csv`
