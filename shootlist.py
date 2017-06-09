@@ -56,7 +56,7 @@ class Site(object):
 		self.dnsrecord += "\n"
         else:
             self.dnstype = "A"
-            self.dnsrecord = a.response.answer.__str__()
+            self.dnsrecord = a.response.answer[0].__str__()
         return
         
     def get_ip(self):
