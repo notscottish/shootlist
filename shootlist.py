@@ -17,7 +17,8 @@ class Site(object):
         self.ip = None
         self.ports = None
         self.encoding = None
-        
+        self.location = None
+	
     def get_ports(self):
         if self.ip is None:
             sys.stderr.write("Error: Must get IP first\n")
@@ -97,16 +98,25 @@ class Site(object):
         else:
             self.encoding = chardet.detect(response._content)['encoding']
         
+    def get_geolocation(self):
+	if self.ip is None
+            return
+	a = requests.get("http://freegeoip.net/csv/%s" % self.ip)
+	if a.ok is False:
+		sys.stderr.write("Warning: No geo location found\n")
+		return
+	self.location = a.content
+	
     def run_all(self):
         print "Running %s\n" % (self.name)
         self.get_dnstype()
         self.get_ip()
         self.get_ports()
         self.get_encoding()
+	self.get_geolocation()
         
     def to_csv(self):
         return "\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"" % (self.name,self.dnstype,self.dnsrecord,self.ip,self.ports,self.encoding)
-
 
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser(description="Check supplied domains for Redshield compatability.")
