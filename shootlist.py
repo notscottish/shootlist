@@ -106,7 +106,7 @@ class Site(object):
 		sys.stderr.write("Warning: No geo location found\n")
 		return
 	self.location = a.content.split(",").__str__()
-	
+    
     def run_all(self):
         sys.stderr.write("Running %s\n" % (self.name))
         self.get_dnstype()
@@ -114,7 +114,10 @@ class Site(object):
         self.get_ports()
         self.get_encoding()
 	self.get_geolocation()
-        
+    
+    def to_tsv(self):
+        return "%s\t%s\t%s\t%s\t%s\t%s\t%s" % (self.name,self.dnstype,self.dnsrecord,self.ip,self.ports,self.encoding,self.location)
+    
     def to_csv(self):
         return "\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"" % (self.name,self.dnstype,self.dnsrecord,self.ip,self.ports,self.encoding,self.location)
 
