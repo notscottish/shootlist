@@ -18,7 +18,7 @@ On OSX, make sure the dependencies are installed using the following terminal co
 On Ubuntu, make sure the dependencies are installed using the following commands:
 * `apt-get install python-chardet python-requests python-argparse python-dnspython`
 
-Grab the `certdump.sh` script from the certdump repo.
+Grab the `certdump.sh` script from the [certdump](https://github.com/notscottish/certdump) repo and make sure it is in the same directory as the `shootlist.py` script
 
 # Usage
 `python shootlist.py -f fqdn_list_filename`
