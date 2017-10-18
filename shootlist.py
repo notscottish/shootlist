@@ -7,6 +7,7 @@ import os
 import re
 import requests
 import socket
+import subprocess
 import sys
 
 class Site(object):
@@ -18,7 +19,7 @@ class Site(object):
         self.ports = None
         self.encoding = None
         self.location = None
-	
+   
     def get_ports(self):
         if self.ip is None:
             sys.stderr.write("Error: Must get IP first\n")
@@ -43,17 +44,17 @@ class Site(object):
         try:
             a = dns.resolver.query(self.name)
         except dns.resolver.NoAnswer:
-            sys.stderr.write("warning: no response\n\n")
+            sys.stderr.write("Warning: Could not resolve name: \"%s\": No response to query\n\n" % (self.name))
             return
         except dns.resolver.NXDOMAIN:
-            sys.stderr.write("warning: no record for cname\n\n")
+            sys.stderr.write("Warning: Could not resolve name: \"%s\": No DNS resolver found for domain\n\n" % (self.name))
             return
         if re.search("CNAME",a.response.answer[0].__str__(), flags=re.IGNORECASE):
-            self.dnstype = "CNAME"
-            self.dnsrecord = ""
-	    for val in a.response.answer:
-		self.dnsrecord += val.to_text()
-		self.dnsrecord += "\n"
+           self.dnstype = "CNAME"
+           self.dnsrecord = ""
+           for val in a.response.answer:
+              self.dnsrecord += val.to_text()
+              self.dnsrecord += "\n"
         else:
             self.dnstype = "A"
             self.dnsrecord = a.response.answer[0].to_text()
@@ -65,16 +66,16 @@ class Site(object):
         try:
             response = resolver.query(self.name, "A")
         except dns.resolver.NXDOMAIN:
-            sys.stderr.write("Warning: Could not resolve name: \"%s\". No IP set." % (self.name))
+            sys.stderr.write("Warning: Could not resolve name: \"%s\": No DNS resolver found for domain." % (self.name))
             return
         except dns.resolver.NoAnswer:
-            sys.stderr.write("Warning: The DNS response does not contain an answer to the question\n")
+            sys.stderr.write("Warning: Could not resolve name: \"%s\": No response to query\n" % (self.name))
             return
         for value in response:
             retval.append(str(value))
         # This is a bodge for the meantime
         if len(retval) > 1:
-            sys.stderr.write("Warning: Multiple IPs returned, using the first only\n")
+            sys.stderr.write("Warning: Multiple IPs returned for \"%s\": using the first only\n" % (self.name))
         self.ip = retval[0]
         
     def get_encoding(self):
@@ -99,50 +100,59 @@ class Site(object):
             self.encoding = chardet.detect(response._content)['encoding']
         
     def get_geolocation(self):
-	if self.ip is None:
-            return
-	a = requests.get("http://freegeoip.net/csv/%s" % self.ip)
-	if a.ok is False:
-		sys.stderr.write("Warning: No geo location found\n")
-		return
-	self.location = a.content.split(",").__str__()
-    
+      if self.ip is None:
+         return
+      a = requests.get("http://freegeoip.net/csv/%s" % self.ip)
+      if a.ok is False:
+         sys.stderr.write("Warning: No geo location found\n")
+         return
+      self.location = a.content.split(",").__str__()
+   
     def run_all(self):
         sys.stderr.write("Running %s\n" % (self.name))
         self.get_dnstype()
         self.get_ip()
         self.get_ports()
         self.get_encoding()
-	self.get_geolocation()
-    
-    def to_tsv(self):
-        return "%s\t%s\t%s\t%s\t%s\t%s\t%s" % (self.name,self.dnstype,self.dnsrecord,self.ip,self.ports,self.encoding,self.location)
-    
+        self.get_geolocation()
+        
     def to_csv(self):
         return "\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"" % (self.name,self.dnstype,self.dnsrecord,self.ip,self.ports,self.encoding,self.location)
 
 if __name__ == "__main__":
-	parser = argparse.ArgumentParser(description="Check supplied domains for Redshield compatability.")
-	parser.add_argument('-f', required=True, help="File containing list of domain names")
-	args = parser.parse_args()
-	sourcefile = os.path.abspath(args.f)
-	
-	if not os.path.isfile(sourcefile):
-		sys.stderr.write("Error: file not found: \"%s\"" % (sourcefile))
-		sys.exit(1)
-	    
-	targets_list = open(sourcefile, "r").read().split("\n")
-	
-	sites = []
-	
-	for name in targets_list:
-		if (len(name) == 0):
-			continue
-		sys.stderr.write("info: %s\n" % (name))
-		s = Site(name)
-		sites.append(s)
-		s.run_all()
-	
-	print "\"Name\",\"DNS Record Type\",\"DNS Record\",\"IP Address\",\"Ports\",\"Encoding\""
-	for site in sites:
-		print site.to_csv()
+   parser = argparse.ArgumentParser(description="Get site configuration data.")
+   parser.add_argument('-f', required=True, help="File containing list of domain names separated by newline.")
+   args = parser.parse_args()
+   sourcefile = os.path.abspath(args.f)
+
+   if not os.path.isfile(sourcefile):
+      sys.stderr.write("Error: file not found: \"%s\"" % (sourcefile))
+      sys.exit(1)
+
+   targets_list = open(sourcefile, "r").read().split("\n")
+   
+   output_file = open("output.csv", "w")
+   output_file.write("\"Name\",\"DNS Record Type\",\"DNS Record\",\"IP Address\",\"Ports\",\"Encoding\",\"GeoIP\",\"Certificate CN:\",\"Certificate SAN:\",\"Certificate Serial Number:\"\n")
+   output_file.flush()
+
+   for fqdn in targets_list:
+      if len(fqdn) == 0:
+         continue
+      
+      s = Site(fqdn)
+      s.run_all()
+      scan_result = s.to_csv()
+
+      try:
+         cert_result = subprocess.check_output(["bash", "./certdump.sh", fqdn])
+      except subprocess.CalledProcessError:
+         sys.stderr.write("Error: calling certdump on \"%s\" failed\n" % (fqdn))
+         cert_result = "\"\",\"\",\"\"\n"
+      
+      result = scan_result + cert_result
+      output_file.write(result)
+      output_file.flush()
+   
+   output_file.write("\n")
+   output_file.flush()
+   output_file.close()
