@@ -15,7 +15,7 @@ Note: The encoding discovery is a bit shit. Basically, if it doesn't report Wind
 
 On OSX, make sure the dependencies are installed using the following terminal commands:
 * `sudo easy_install pip`
-* `sudo pip install requests chardet argparse`
+* `sudo pip install requests chardet argparse dnspython`
 
 On Ubuntu, make sure the dependencies are installed using the following commands:
 * `apt-get install python-chardet python-requests python-argparse python-dnspython`
