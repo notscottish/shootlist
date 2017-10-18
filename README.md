@@ -1,5 +1,5 @@
 # About
-This script will take as input a list of FQDNs.
+This script will take as input a list of FQDNs and outputs a comma separated values document (`output.csv`) with the DNS, IP, hosting location, encoding and TLS certificate attributes able to be discovered.
 
 For each FQDN, the script will:
 * Perform a DNS lookup
@@ -8,6 +8,8 @@ For each FQDN, the script will:
 * Does a Geo IP lookup
 * Calls the external "certdump.sh" bash script, which grabs the cert and parses out the CN, SAN, and serial number
 * Outputs all discovered information to "output.csv".
+
+Note: The encoding discovery is a bit shit. Basically, if it doesn't report Windows-1252 (ANSI), ISO-8859, or a language specific one (e.g. GBK), it is probably UTF-8.
 
 # Setup
 
