@@ -9,7 +9,7 @@ For each FQDN, the script will:
 * Calls the external "certdump.sh" bash script, which grabs the cert and parses out the CN, SAN, and serial number
 * Outputs all discovered information to "output.csv".
 
-Note: The encoding discovery is a bit shit. Basically, if it doesn't report Windows-1252 (ANSI), ISO-8859, or a language specific one (e.g. GBK), it is probably UTF-8.
+Note: The encoding discovery is rubbish. Basically, if it doesn't report Windows-1252 (ANSI), ISO-8859, or a language specific one (e.g. GBK), it is probably UTF-8.
 
 # Setup
 
