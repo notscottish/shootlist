@@ -130,6 +130,7 @@ if __name__ == "__main__":
       sys.exit(1)
 
    targets_list = open(sourcefile, "r").read().split("\n")
+   targets_list = [x.strip("\r") for x in targets_list]
    
    output_file = open("output.csv", "w")
    output_file.write("\"Name\",\"DNS Record Type\",\"DNS Record\",\"IP Address\",\"Ports\",\"Encoding\",\"GeoIP\",\"Certificate CN:\",\"Certificate SAN:\",\"Certificate Serial Number:\"\n")
